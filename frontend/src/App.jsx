@@ -18,7 +18,7 @@ function App() {
           </Link>
           <nav className="hidden md:flex gap-6 font-medium text-gray-600">
             <Link to="/" className="hover:text-primary transition-colors">Home</Link>
-            <Link to="/upload" className="hover:text-primary transition-colors">Diagnose</Link>
+            <Link to="/" className="hover:text-primary transition-colors">Select Crop Dashboard</Link>
           </nav>
         </header>
 
@@ -26,7 +26,7 @@ function App() {
         <main className="flex-1 flex flex-col items-center p-6 w-full max-w-5xl mx-auto">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/upload" element={<Upload />} />
+            <Route path="/upload/:cropName" element={<Upload />} />
             <Route path="/result" element={<Result />} />
           </Routes>
         </main>

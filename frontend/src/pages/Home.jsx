@@ -23,13 +23,7 @@ export default function Home() {
           Upload a leaf photo and get instant diagnosis and treatment advice to protect your harvest.
         </p>
         
-        <button 
-          onClick={() => navigate('/upload')}
-          className="group inline-flex items-center gap-3 px-8 mx-auto py-5 text-xl font-bold text-white bg-accent rounded-full hover:bg-[#e69352] hover:-translate-y-1 hover:shadow-xl transition-all duration-300"
-        >
-          Analyze Your Crop
-          <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
-        </button>
+        <div className="mx-auto w-16 h-1 bg-secondary rounded-full mt-6"></div>
       </div>
 
       {/* Supported Crops Section */}
@@ -38,10 +32,14 @@ export default function Home() {
         
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-12 max-w-4xl mx-auto">
           {crops.map((crop) => (
-            <div key={crop.name} className="flex flex-col items-center p-6 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-secondary hover:shadow-md transition-all duration-300">
-              <span className="text-6xl mb-4" role="img" aria-label={crop.name}>{crop.icon}</span>
-              <span className="text-2xl font-semibold text-gray-800">{crop.name}</span>
-            </div>
+            <button 
+              key={crop.name} 
+              onClick={() => navigate(`/upload/${crop.name.toLowerCase()}`)}
+              className="group flex flex-col items-center p-8 bg-white rounded-2xl shadow-sm border border-gray-100 hover:border-secondary hover:bg-[#eaf6f0] hover:shadow-lg transition-all duration-300 cursor-pointer"
+            >
+              <span className="text-6xl mb-4 group-hover:scale-110 transition-transform duration-300" role="img" aria-label={crop.name}>{crop.icon}</span>
+              <span className="text-2xl font-bold text-gray-800 group-hover:text-primary transition-colors">{crop.name}</span>
+            </button>
           ))}
         </div>
       </div>

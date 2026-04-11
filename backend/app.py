@@ -93,39 +93,79 @@ def predict():
             
         img_array_norm = img_array.astype('float32') / 255.0
 
-        # Heuristic Leaf Validation: Check for presence of typical Yellow/Green pigmentation
+        # Heuristic Leaf Validation: Tightened to reject documents/spreadsheets
         import matplotlib.colors as mcolors
         hsv_image = mcolors.rgb_to_hsv(img_array_norm)
         hues = hsv_image[:, :, 0]
         sats = hsv_image[:, :, 1]
         vals = hsv_image[:, :, 2]
         
-        # Hue roughly 0.10 to 0.45 spans brown-yellows to deep greens.
-        leaf_pixels = np.sum((hues >= 0.10) & (hues <= 0.45) & (sats >= 0.15) & (vals >= 0.15))
+        # Crop leaves must occupy at least 15% of the frame to be clearly diagnosable.
+        leaf_mask = (hues >= 0.08) & (hues <= 0.45) & (sats >= 0.15) & (vals >= 0.10)
+        leaf_pixels = np.sum(leaf_mask)
         total_pixels = 224 * 224
+        green_ratio = leaf_pixels / total_pixels
         
-        if (leaf_pixels / total_pixels) < 0.02:
+        # Digital artifacts (text layers, spreadsheets) are generally stark white/gray/black 
+        digital_background = np.sum(sats < 0.12) / total_pixels
+        
+        if green_ratio < 0.15 or digital_background > 0.60:
             return jsonify({
                 "is_leaf": False, 
-                "error": "WARNING: The uploaded photo does not appear to exhibit clear leaf features or colors. Please rely only on actual crop leaves for disease inspection."
+                "error": f"WARNING: Image flagged as non-leaf (Foliage area: {green_ratio*100:.1f}%, Digital Canvas: {digital_background*100:.1f}%). Please ensure a real leaf fills the frame!"
             }), 400
 
         img_batch = np.expand_dims(img_array_norm, axis=0) # Add batch dimension
 
+        crop_filter = request.form.get('crop', '').lower()
+
         # 3 & 4. Run prediction and get confidence score
+        mismatch_warning = None
+        
         if model is not None:
-            predictions = model.predict(img_batch)
-            predicted_idx = np.argmax(predictions[0])
-            confidence = float(predictions[0][predicted_idx]) * 100
+            predictions = model.predict(img_batch)[0]
+            global_predicted_idx = np.argmax(predictions)
+            global_disease_key = CLASS_NAMES[global_predicted_idx]
+            
+            if crop_filter:
+                masked_predictions = np.copy(predictions)
+                valid_indices = [i for i, name in enumerate(CLASS_NAMES) if crop_filter in name.lower()]
+                
+                if valid_indices:
+                    mask = np.ones(len(CLASS_NAMES), dtype=bool)
+                    mask[valid_indices] = False
+                    masked_predictions[mask] = -1.0 # Guarantee invalid classes have lowest score
+                    
+                    predicted_idx = np.argmax(masked_predictions)
+                    confidence = float(masked_predictions[predicted_idx]) * 100
+                else:
+                    predicted_idx = global_predicted_idx
+                    confidence = float(predictions[predicted_idx]) * 100
+                    
+                disease_key = CLASS_NAMES[predicted_idx]
+                
+                if global_disease_key != disease_key:
+                    # Clean up global crop name for display (e.g. "Corn_(maize)" -> "Maize")
+                    global_crop = global_disease_key.split('_')[0].replace('Corn', 'Maize')
+                    mismatch_warning = f"Notice: The AI strongly mapped this image to {global_crop}. Displaying {crop_filter.capitalize()} results anyway since you selected it."
+            else:
+                predicted_idx = global_predicted_idx
+                confidence = float(predictions[predicted_idx]) * 100
+                disease_key = CLASS_NAMES[predicted_idx]
+
         else:
             import random
-            predicted_idx = random.randint(0, len(CLASS_NAMES) - 1)
+            if crop_filter:
+                valid_indices = [i for i, name in enumerate(CLASS_NAMES) if crop_filter in name.lower()]
+                if valid_indices:
+                    predicted_idx = random.choice(valid_indices)
+                else:
+                    predicted_idx = random.randint(0, len(CLASS_NAMES) - 1)
+            else:
+                predicted_idx = random.randint(0, len(CLASS_NAMES) - 1)
+                
             confidence = random.uniform(75.5, 99.5)
-        
-        if 0 <= predicted_idx < len(CLASS_NAMES):
             disease_key = CLASS_NAMES[predicted_idx]
-        else:
-            disease_key = "Unknown"
 
         # 5. Look up matching entry in recommendations.json
         recs = load_recommendations()
@@ -139,7 +179,8 @@ def predict():
            "is_healthy": entry.get("is_healthy", False),
            "fertilizer": entry.get("fertilizer", "No recommendation available."),
            "pesticide": entry.get("pesticide", "No recommendation available."),
-           "prevention": entry.get("prevention", "No prevention tips available.")
+           "prevention": entry.get("prevention", "No prevention tips available."),
+           "mismatch_warning": mismatch_warning
         }
         
         return jsonify(response), 200

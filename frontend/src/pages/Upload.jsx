@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Leaf, UploadCloud, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
 
 export default function Upload() {
@@ -12,6 +12,10 @@ export default function Upload() {
   
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const { cropName } = useParams();
+  
+  // Capitalize crop name for display purposes
+  const formattedCropName = cropName ? cropName.charAt(0).toUpperCase() + cropName.slice(1) : "Crop";
 
   const handleDrag = (e) => {
     e.preventDefault();
@@ -59,6 +63,9 @@ export default function Upload() {
     
     const formData = new FormData();
     formData.append('image', selectedImage);
+    if (cropName) {
+      formData.append('crop', cropName);
+    }
 
     try {
       const response = await fetch('http://localhost:5000/predict', {
@@ -79,7 +86,7 @@ export default function Upload() {
       navigate('/result', { state: { resultData: data, imagePreview: previewUrl } });
       
     } catch (err) {
-      setErrorMsg("Something went wrong. Please try again.");
+      setErrorMsg(err.message || "Something went wrong. Please try again.");
       console.error(err);
     } finally {
       setIsLoading(false);
@@ -98,8 +105,8 @@ export default function Upload() {
       </button>
 
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-extrabold text-primary mb-2">Upload Crop Image</h2>
-        <p className="text-xl text-gray-600">Take a clear picture of the leaf from above.</p>
+        <h2 className="text-3xl font-extrabold text-primary mb-2">Upload {formattedCropName} Image</h2>
+        <p className="text-xl text-gray-600">Take a clear picture of the {formattedCropName.toLowerCase()} leaf from above.</p>
       </div>
 
       <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-100">

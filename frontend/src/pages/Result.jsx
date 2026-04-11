@@ -43,6 +43,16 @@ export default function Result() {
           </div>
         )}
 
+        {/* Mismatch Warning Alert */}
+        {resultData.mismatch_warning && (
+          <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 flex items-start gap-4">
+            <AlertTriangle className="w-8 h-8 text-yellow-600 shrink-0 mt-1" />
+            <p className="text-yellow-800 text-lg font-medium leading-relaxed">
+              {resultData.mismatch_warning}
+            </p>
+          </div>
+        )}
+
         {/* Header Section */}
         <div className="p-8 border-b border-gray-100 flex flex-col md:flex-row gap-8 items-center bg-gray-50">
           {imagePreview ? (
