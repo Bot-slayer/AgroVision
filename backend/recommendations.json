@@ -1,0 +1,98 @@
+{
+  "Tomato___Early_blight": {
+    "crop": "Tomato",
+    "disease_name": "Early Blight",
+    "is_healthy": false,
+    "fertilizer": "Apply potassium-rich fertilizer to strengthen the plant",
+    "pesticide": "Spray copper-based fungicide every 7 days",
+    "prevention": "Remove infected leaves, avoid watering from above, rotate crops each season"
+  },
+  "Tomato___Late_blight": {
+    "crop": "Tomato",
+    "disease_name": "Late Blight",
+    "is_healthy": false,
+    "fertilizer": "Avoid excess nitrogen. Use balanced NPK soil additives",
+    "pesticide": "Apply chlorothalonil or mancozeb as soon as conditions are wet and cool",
+    "prevention": "Destroy culled potatoes, keep foliage dry, space plants well"
+  },
+  "Tomato___Leaf_Mold": {
+    "crop": "Tomato",
+    "disease_name": "Leaf Mold",
+    "is_healthy": false,
+    "fertilizer": "Maintain balanced fertility to ensure robust growth",
+    "pesticide": "Fungicides containing chlorothalonil or copper",
+    "prevention": "Ensure good ventilation, reduce humidity, prune lower leaves"
+  },
+  "Tomato___healthy": {
+    "crop": "Tomato",
+    "disease_name": "Healthy",
+    "is_healthy": true,
+    "fertilizer": "Continue current regular feeding with balanced nutrients",
+    "pesticide": "No pesticide needed",
+    "prevention": "Maintain consistent watering and watch for pests"
+  },
+  "Potato___Early_blight": {
+    "crop": "Potato",
+    "disease_name": "Early Blight",
+    "is_healthy": false,
+    "fertilizer": "Ensure adequate nitrogen and phosphorus throughout the season",
+    "pesticide": "Use azoxystrobin or chlorothalonil during early detection",
+    "prevention": "Use certified seed, allow tubers to mature fully before harvest"
+  },
+  "Potato___Late_blight": {
+    "crop": "Potato",
+    "disease_name": "Late Blight",
+    "is_healthy": false,
+    "fertilizer": "Avoid over-fertilizing with nitrogen to prevent lush, vulnerable canopies",
+    "pesticide": "Apply preventative fungicides immediately when cool, wet weather persists",
+    "prevention": "Remove volunteer potatoes, plant resistant varieties"
+  },
+  "Potato___healthy": {
+    "crop": "Potato",
+    "disease_name": "Healthy",
+    "is_healthy": true,
+    "fertilizer": "Apply standard recommended NPK for potatoes",
+    "pesticide": "No pesticide needed",
+    "prevention": "Keep weeds under control and maintain even soil moisture"
+  },
+  "Corn_(maize)___Common_rust_": {
+    "crop": "Maize",
+    "disease_name": "Common Rust",
+    "is_healthy": false,
+    "fertilizer": "Use balanced fertilizer. High nitrogen can increase rust severity",
+    "pesticide": "Foliar fungicides applied prior to silking if infection is severe",
+    "prevention": "Plant rust-resistant hybrids, manage crop residue"
+  },
+  "Corn_(maize)___Northern_Leaf_Blight": {
+    "crop": "Maize",
+    "disease_name": "Northern Leaf Blight",
+    "is_healthy": false,
+    "fertilizer": "Ensure sufficient potassium levels",
+    "pesticide": "Apply appropriate fungicides like pyraclostrobin if lesions spread",
+    "prevention": "Rotate crops with non-hosts, plow under debris to reduce inoculum"
+  },
+  "Corn_(maize)___healthy": {
+    "crop": "Maize",
+    "disease_name": "Healthy",
+    "is_healthy": true,
+    "fertilizer": "Side-dress nitrogen when knee-high",
+    "pesticide": "No pesticide needed",
+    "prevention": "Keep field free of excessive weeds"
+  },
+  "Pepper,_bell___Bacterial_spot": {
+    "crop": "Pepper",
+    "disease_name": "Bacterial Spot",
+    "is_healthy": false,
+    "fertilizer": "Maintain balanced fertility without excessive nitrogen",
+    "pesticide": "Apply copper bactericide combined with mancozeb for maximum effect",
+    "prevention": "Use certified disease-free seeds and avoid overhead irrigation"
+  },
+  "Pepper,_bell___healthy": {
+    "crop": "Pepper",
+    "disease_name": "Healthy",
+    "is_healthy": true,
+    "fertilizer": "Use calcium and magnesium rich fertilizers to prevent blossom end rot",
+    "pesticide": "No pesticide needed",
+    "prevention": "Mulch soil and ensure even watering"
+  }
+}
