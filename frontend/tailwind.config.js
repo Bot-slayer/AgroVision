@@ -11,6 +11,10 @@ export default {
         accent: '#F4A261',
         background: '#F8F9F4',
         text: '#1B1B1B',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+        heading: ['Outfit', 'sans-serif'],
       }
     },
   },

@@ -1,8 +1,11 @@
 import { useState, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Leaf, UploadCloud, ArrowLeft, Loader2, AlertCircle } from 'lucide-react';
+import { useUser } from '../context/UserContext';
 
 export default function Upload() {
+  const { addHistoryItem } = useUser();
+
   const [dragActive, setDragActive] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -51,7 +54,11 @@ export default function Upload() {
       return;
     }
     setSelectedImage(file);
-    setPreviewUrl(URL.createObjectURL(file));
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPreviewUrl(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async () => {
@@ -81,9 +88,15 @@ export default function Upload() {
         }
         throw new Error(data.error || "Server error");
       }
+
+      // Record diagnosis in User Profile Search History
+      const historyRecord = addHistoryItem({
+        ...data,
+        imagePreview: previewUrl
+      });
       
       // Navigate to result on success
-      navigate('/result', { state: { resultData: data, imagePreview: previewUrl } });
+      navigate('/result', { state: { resultData: data, imagePreview: previewUrl, historyId: historyRecord.id } });
       
     } catch (err) {
       setErrorMsg(err.message || "Something went wrong. Please try again.");
@@ -94,25 +107,25 @@ export default function Upload() {
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto flex flex-col pt-4 animate-in fade-in duration-500">
+    <div className="w-full max-w-2xl mx-auto flex flex-col pt-8 px-4">
       
       <button 
         onClick={() => navigate('/')} 
         disabled={isLoading}
-        className="self-start flex items-center gap-2 text-primary font-bold mb-8 hover:text-secondary disabled:opacity-50"
+        className="self-start flex items-center gap-2 text-primary font-medium text-sm mb-8 hover:text-secondary disabled:opacity-50"
       >
-        <ArrowLeft className="w-6 h-6" /> Back to Home
+        <ArrowLeft className="w-4 h-4" /> Back to Home
       </button>
 
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-extrabold text-primary mb-2">Upload {formattedCropName} Image</h2>
-        <p className="text-xl text-gray-600">Take a clear picture of the {formattedCropName.toLowerCase()} leaf from above.</p>
+        <h2 className="text-3xl font-bold text-primary mb-2 font-heading">Upload {formattedCropName} Image</h2>
+        <p className="text-gray-600">Take a clear picture of the {formattedCropName.toLowerCase()} leaf from above.</p>
       </div>
 
-      <div className="bg-white p-8 rounded-3xl shadow-md border border-gray-100">
+      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-gray-200 shadow-sm">
         {!previewUrl ? (
           <div 
-            className={`w-full border-4 border-dashed rounded-2xl p-12 flex flex-col items-center justify-center cursor-pointer transition-colors duration-300 ${dragActive ? 'border-secondary bg-[#eaf6f0]' : 'border-gray-300 bg-gray-50 hover:border-primary'}`}
+            className={`w-full border-2 border-dashed rounded-xl p-10 flex flex-col items-center justify-center cursor-pointer transition-colors duration-200 ${dragActive ? 'border-primary bg-green-50' : 'border-gray-300 bg-gray-50 hover:border-primary hover:bg-gray-100'}`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -129,22 +142,22 @@ export default function Upload() {
             <div className="bg-white p-4 rounded-full shadow-sm mb-6">
               <Leaf className="w-12 h-12 text-primary" />
             </div>
-            <p className="text-2xl font-bold text-gray-800 mb-2">Drag & Drop Image Here</p>
-            <p className="text-lg text-gray-500 mb-4">or tap to browse files</p>
-            <div className="inline-flex items-center gap-2 bg-gray-200 text-gray-700 px-4 py-1 rounded-full text-sm font-semibold">
-              Supported mapping: JPG, PNG
+            <p className="text-lg font-semibold text-gray-800 mb-1">Drag & Drop Image Here</p>
+            <p className="text-sm text-gray-500 mb-6">or click to browse files</p>
+            <div className="inline-flex items-center gap-2 bg-white text-gray-600 text-xs px-3 py-1.5 rounded-md border border-gray-200 font-medium tracking-wide">
+              Supported formats: JPG, PNG
             </div>
           </div>
         ) : (
           <div className="flex flex-col items-center">
-            <div className="w-full h-80 rounded-2xl overflow-hidden bg-gray-100 flex items-center justify-center mb-6 relative">
+            <div className="w-full h-72 rounded-xl overflow-hidden bg-gray-50 border border-gray-200 flex items-center justify-center mb-6 relative">
               <img src={previewUrl} alt="Leaf Preview" className="object-contain w-full h-full" />
               {!isLoading && (
                  <button 
                    onClick={() => { setSelectedImage(null); setPreviewUrl(null); }}
-                   className="absolute top-4 right-4 bg-white text-red-500 px-4 py-2 font-bold rounded-lg shadow hover:bg-red-50"
+                   className="absolute top-3 right-3 bg-white text-gray-600 text-sm px-3 py-1.5 font-medium rounded-md shadow-sm border border-gray-200 hover:bg-gray-50 hover:text-red-600 transition-colors"
                  >
-                   Clear Image
+                   Clear
                  </button>
               )}
             </div>
@@ -152,16 +165,16 @@ export default function Upload() {
             <button 
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full py-5 bg-accent text-white rounded-full text-2xl font-bold shadow-lg hover:bg-[#e69352] transition-colors disabled:opacity-70 flex items-center justify-center gap-3"
+              className="w-full py-4 bg-primary text-white rounded-xl text-lg font-semibold hover:bg-[#22503A] transition-colors disabled:opacity-70 flex items-center justify-center gap-2 shadow-sm"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="w-8 h-8 animate-spin" />
-                  Analyzing...
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Analyzing & Saving to Profile...
                 </>
               ) : (
                 <>
-                  <UploadCloud className="w-8 h-8" />
+                  <UploadCloud className="w-5 h-5" />
                   Analyze Leaf
                 </>
               )}

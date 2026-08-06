@@ -1,16 +1,16 @@
 import os
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.applications import MobileNetV2
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout
-from tensorflow.keras.models import Model
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.preprocessing.image import ImageDataGenerator  # type: ignore
+from tensorflow.keras.applications import MobileNetV2  # type: ignore
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D, Dropout  # type: ignore
+from tensorflow.keras.models import Model  # type: ignore
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint  # type: ignore
 from sklearn.metrics import classification_report, confusion_matrix
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Note: User must supply PlantVillage dataset here
-DATASET_PATH = r"C:\Users\12rub\Desktop\dataset\archive\PlantVillage"
+DATASET_PATH = r"C:\Users\12rub\Desktop\dataset\data\PlantVillageDataset\PlantVillage"
 
 def create_model(num_classes):
     print("Initializing MobileNetV2 Base...")
@@ -69,20 +69,23 @@ def main():
         validation_split=0.2
     )
 
-    # Target explicit folder names based on the 12 classes
+    # Target explicit folder names based on the 15 classes present in the dataset
     target_classes = [
-        "Corn_(maize)___Common_rust_",
-        "Corn_(maize)___Northern_Leaf_Blight",
-        "Corn_(maize)___healthy",
-        "Pepper,_bell___Bacterial_spot",
-        "Pepper,_bell___healthy",
+        "Pepper__bell___Bacterial_spot",
+        "Pepper__bell___healthy",
         "Potato___Early_blight",
         "Potato___Late_blight",
         "Potato___healthy",
-        "Tomato___Early_blight",
-        "Tomato___Late_blight",
-        "Tomato___Leaf_Mold",
-        "Tomato___healthy"
+        "Tomato_Bacterial_spot",
+        "Tomato_Early_blight",
+        "Tomato_Late_blight",
+        "Tomato_Leaf_Mold",
+        "Tomato_Septoria_leaf_spot",
+        "Tomato_Spider_mites_Two_spotted_spider_mite",
+        "Tomato__Target_Spot",
+        "Tomato__Tomato_YellowLeaf__Curl_Virus",
+        "Tomato__Tomato_mosaic_virus",
+        "Tomato_healthy"
     ]
 
     # 1. Training (80%)
