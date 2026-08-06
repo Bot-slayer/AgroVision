@@ -141,6 +141,51 @@ function NavBar() {
 }
 
 function App() {
+  useEffect(() => {
+    const selector = 'button, a, [data-ripple], .cursor-pointer';
+    const handleRipple = (event) => {
+      const target = event.target.closest(selector);
+      if (!target) return;
+      if (target instanceof HTMLElement === false) return;
+
+      const rect = target.getBoundingClientRect();
+      const baseSize = Math.max(rect.width, rect.height) * 1.6;
+      const clickX = event.clientX - rect.left;
+      const clickY = event.clientY - rect.top;
+
+      // create 3 concentric water rings
+      for (let i = 0; i < 3; i += 1) {
+        const ring = document.createElement('span');
+        const size = baseSize * (1 + i * 0.22);
+        const x = clickX - size / 2;
+        const y = clickY - size / 2;
+
+        ring.className = `ripple-ring delay-${i}`;
+        ring.style.width = `${size}px`;
+        ring.style.height = `${size}px`;
+        ring.style.left = `${x}px`;
+        ring.style.top = `${y}px`;
+
+        target.appendChild(ring);
+        ring.addEventListener('animationend', () => ring.remove(), { once: true });
+      }
+
+      // small central drop highlight
+      const drop = document.createElement('span');
+      drop.className = 'ripple-drop';
+      const dSize = Math.max(8, Math.min(16, Math.round(baseSize * 0.12)));
+      drop.style.width = `${dSize}px`;
+      drop.style.height = `${dSize}px`;
+      drop.style.left = `${clickX - dSize / 2}px`;
+      drop.style.top = `${clickY - dSize / 2}px`;
+      target.appendChild(drop);
+      drop.addEventListener('animationend', () => drop.remove(), { once: true });
+    };
+
+    document.addEventListener('pointerdown', handleRipple, true);
+    return () => document.removeEventListener('pointerdown', handleRipple, true);
+  }, []);
+
   return (
     <UserProvider>
       <Router>

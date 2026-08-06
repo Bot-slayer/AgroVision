@@ -150,6 +150,9 @@ export function UserProvider({ children }) {
   };
 
   const logout = () => {
+    setProfiles(prev => prev.map(p =>
+      p.id === activeProfile.id ? { ...p, isAuthenticated: false } : p
+    ));
     setActiveProfileId(DEFAULT_GUEST_PROFILE.id);
   };
 

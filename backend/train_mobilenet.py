@@ -26,14 +26,16 @@ def create_model(num_classes):
     # Append custom top logic
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
+    x = Dense(256, activation='relu')(x)
+    x = Dropout(0.2)(x)
     x = Dense(128, activation='relu')(x)
-    x = Dropout(0.3)(x)
+    x = Dropout(0.2)(x)
     predictions = Dense(num_classes, activation='softmax')(x)
     
     model = Model(inputs=base_model.input, outputs=predictions)
     
     model.compile(
-        optimizer=tf.keras.optimizers.Adam(learning_rate=0.001),
+        optimizer=tf.keras.optimizers.Adam(learning_rate=0.0005),
         loss='categorical_crossentropy',
         metrics=['accuracy']
     )
@@ -58,9 +60,14 @@ def main():
 
     train_datagen = ImageDataGenerator(
         rescale=1.0/255.0,
-        rotation_range=20,
-        zoom_range=0.2,
+        rotation_range=30,
+        zoom_range=0.3,
+        width_shift_range=0.2,
+        height_shift_range=0.2,
         horizontal_flip=True,
+        vertical_flip=True,
+        shear_range=0.2,
+        fill_mode='nearest',
         validation_split=0.2 
     )
 
@@ -133,10 +140,10 @@ def main():
         verbose=1
     )
     
-    print("\nStarting 30-epoch training...")
+    print("\nStarting 75-epoch training...")
     history = model.fit(
         train_generator,
-        epochs=30,
+        epochs=75,
         validation_data=val_generator, # Acting as both validation and test here simply
         callbacks=[early_stop, checkpoint]
     )

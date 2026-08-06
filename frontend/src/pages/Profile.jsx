@@ -29,6 +29,7 @@ export default function Profile() {
   const [isCreating, setIsCreating] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState('login');
+  const [authModalEmail, setAuthModalEmail] = useState('');
 
   // Edit profile state
   const [name, setName] = useState(activeProfile.name);
@@ -60,6 +61,20 @@ export default function Profile() {
     setIsEditing(true);
   };
 
+  const openAuth = (tab, email = '') => {
+    setAuthModalTab(tab);
+    setAuthModalEmail(email);
+    setAuthModalOpen(true);
+  };
+
+  const handleProfileClick = (profile) => {
+    if (profile.email && !profile.isAuthenticated) {
+      openAuth('login', profile.email);
+      return;
+    }
+    switchProfile(profile.id);
+  };
+
   const handleSaveProfile = (e) => {
     e.preventDefault();
     updateProfile({ name, role, region, avatar });
@@ -77,11 +92,6 @@ export default function Profile() {
     });
     setNewName('');
     setIsCreating(false);
-  };
-
-  const openAuth = (tab) => {
-    setAuthModalTab(tab);
-    setAuthModalOpen(true);
   };
 
   // Filter history items
@@ -161,7 +171,7 @@ export default function Profile() {
             return (
               <div
                 key={p.id}
-                onClick={() => switchProfile(p.id)}
+                onClick={() => handleProfileClick(p)}
                 className={`group relative p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
                   isActive 
                     ? 'bg-emerald-50/70 border-primary shadow-sm ring-2 ring-primary/20' 
@@ -186,6 +196,10 @@ export default function Profile() {
                     ) : p.isAuthenticated ? (
                       <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded-md mt-0.5 truncate">
                         <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" /> {p.email}
+                      </span>
+                    ) : p.email ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-100/80 px-2 py-0.5 rounded-md mt-0.5 truncate">
+                        <Lock className="w-2.5 h-2.5 text-amber-700" /> Login required
                       </span>
                     ) : (
                       <p className="text-xs text-gray-500 truncate">{p.role}</p>
@@ -518,6 +532,7 @@ export default function Profile() {
         isOpen={authModalOpen}
         onClose={() => setAuthModalOpen(false)}
         initialTab={authModalTab}
+        initialEmail={authModalEmail}
       />
 
       {/* Create Local Account Modal */}

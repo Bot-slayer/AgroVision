@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '../context/UserContext';
 import { X, Lock, Mail, User, ShieldCheck, Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const AVATAR_OPTIONS = ['👨‍🌾', '👩‍🌾', '🌾', '🌱', '🥔', '🍅', '🌶️', '🌽'];
 
-export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
+export default function AuthModal({ isOpen, onClose, initialTab = 'login', initialEmail = '' }) {
   const { loginWithGmail, registerWithGmail } = useUser();
   
   const [activeTab, setActiveTab] = useState(initialTab); // 'login' or 'register'
   
   // Form fields
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState('Smallholder Farmer');
@@ -21,6 +21,16 @@ export default function AuthModal({ isOpen, onClose, initialTab = 'login' }) {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab);
+      setEmail(initialEmail);
+      setErrorMsg('');
+      setSuccessMsg('');
+      setShowPassword(false);
+    }
+  }, [isOpen, initialTab, initialEmail]);
 
   if (!isOpen) return null;
 
