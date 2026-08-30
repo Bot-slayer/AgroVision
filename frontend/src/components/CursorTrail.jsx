@@ -10,14 +10,20 @@ export default function CursorTrail() {
     let idleTimer = null;
     let idleInterval = null;
     let container = null;
+    let lastSpawnTime = 0; // throttle tracker
 
     const handlePointerMove = (e) => {
       const x = e.clientX;
       const y = e.clientY;
 
-      // Always spawn ripples as cursor moves for smooth following effect
       if (!container) container = document.querySelector('.pointer-events-none.fixed.inset-0');
-      spawnRipple(container, x, y);
+
+      // Throttle: only spawn a ripple every 400ms while moving
+      const now = Date.now();
+      if (now - lastSpawnTime >= 400) {
+        spawnRipple(container, x, y);
+        lastSpawnTime = now;
+      }
 
       lastPoint = { x, y };
 
@@ -28,12 +34,12 @@ export default function CursorTrail() {
         idleInterval = null;
       }
 
-      // When pointer stops for 220ms, start idle ripples every 400ms
+      // When pointer stops for 400ms, start idle ripples every 400ms
       idleTimer = setTimeout(() => {
         idleInterval = setInterval(() => {
           if (container) spawnRipple(container, lastPoint.x, lastPoint.y);
         }, 400);
-      }, 220);
+      }, 400);
     };
 
     window.addEventListener('pointermove', handlePointerMove, { passive: true });
@@ -49,30 +55,16 @@ export default function CursorTrail() {
   );
 }
 
-// Helper to spawn ripple elements with smaller, less attention-catching size and opacity
+// Helper: spawn a single subtle ring per trigger
 function spawnRipple(container, x, y) {
   if (!container) return;
-  const baseSize = 42; // Reduced from 80 for subtler effect
-  for (let i = 0; i < 3; i += 1) {
-    const ring = document.createElement('span');
-    ring.className = `ripple-ring delay-${i}`;
-    const size = baseSize * (1 + i * 0.22);
-    ring.style.width = `${size}px`;
-    ring.style.height = `${size}px`;
-    ring.style.left = `${x - size / 2}px`;
-    ring.style.top = `${y - size / 2}px`;
-    ring.style.opacity = '0.35'; // Reduced opacity for less attention-catching
-    container.appendChild(ring);
-    ring.addEventListener('animationend', () => ring.remove(), { once: true });
-  }
-  const drop = document.createElement('span');
-  drop.className = 'ripple-drop';
-  const d = 10;
-  drop.style.width = `${d}px`;
-  drop.style.height = `${d}px`;
-  drop.style.left = `${x - d / 2}px`;
-  drop.style.top = `${y - d / 2}px`;
-  drop.style.opacity = '0.4'; // Reduced opacity
-  container.appendChild(drop);
-  drop.addEventListener('animationend', () => drop.remove(), { once: true });
+  const size = 48;
+  const ring = document.createElement('span');
+  ring.className = 'ripple-ring';
+  ring.style.width = `${size}px`;
+  ring.style.height = `${size}px`;
+  ring.style.left = `${x - size / 2}px`;
+  ring.style.top = `${y - size / 2}px`;
+  container.appendChild(ring);
+  ring.addEventListener('animationend', () => ring.remove(), { once: true });
 }

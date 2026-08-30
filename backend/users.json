@@ -1,0 +1,36 @@
+{
+  "testfarmer@gmail.com": {
+    "id": "usr_1785906972_04ff",
+    "email": "testfarmer@gmail.com",
+    "password_hash": "scrypt:32768:8:1$BvrEGWRO7TfMXlr3$6aabe017fb9f09af16e7cdcc6758c5088c1285bb573fbe27de22f6472bff26c6029f46aa5b591a4079c1cdf401721cfa5978411fa4ad2d58565b96f810b30001",
+    "name": "Test Farmer",
+    "role": "Smallholder Farmer",
+    "region": "Chitwan, Nepal",
+    "avatar": "\ud83d\udc68\u200d\ud83c\udf3e",
+    "crops": [
+      "Tomato",
+      "Potato",
+      "Maize",
+      "Pepper"
+    ],
+    "is_verified": true,
+    "created_at": "2026-08-05T11:01:13.062416"
+  },
+  "12rubiscube@gmail.com": {
+    "id": "usr_1785907092_cefe",
+    "email": "12rubiscube@gmail.com",
+    "password_hash": "scrypt:32768:8:1$HpYEsYs4lbuj8j9o$d2e831022514d6e29602762ac2a800e3791e6d630bd548d32f8a1b88c5dd8048a01f69e49b13d0ac8c446ba76ce9c1898d09cacf6b22be6aaa801ee4eb00c94d",
+    "name": "Kanchan Chamling",
+    "role": "Smallholder Farmer",
+    "region": "Udayapur, Nepal",
+    "avatar": "\ud83d\udc68\u200d\ud83c\udf3e",
+    "crops": [
+      "Tomato",
+      "Potato",
+      "Maize",
+      "Pepper"
+    ],
+    "is_verified": true,
+    "created_at": "2026-08-05T11:03:13.091956"
+  }
+}
